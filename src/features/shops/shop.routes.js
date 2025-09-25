@@ -2,8 +2,8 @@ const { Router } = require('express');
 const { createShopHandler, getAdminShopsHandler } = require('./shop.controller');
 const { protect } = require('../../core/middleware/auth.middleware');
 
-// Import the product router for nested routes
-const productRoutes = require('../products/product.routes');
+const productRoutes = require('../products/product.routes'); // Import the product router for nested routes
+const purchaseRoutes = require('../purchases/purchase.routes'); // Import the purchase router for nested routes
 
 const router = Router();
 
@@ -16,5 +16,9 @@ router.route('/').post(createShopHandler).get(getAdminShopsHandler);
 // Mount the product router
 // Any request to /api/v1/shops/:shopId/products will be handled by productRoutes
 router.use('/:shopId/products', productRoutes);
+
+// Mount the purchase router
+// Any request to /api/v1/shops/:shopId/purchases will be handled by purchaseRoutes
+router.use('/:shopId/purchases', purchaseRoutes);
 
 module.exports = router;
