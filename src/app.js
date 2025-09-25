@@ -15,9 +15,11 @@ app.get('/', (req, res) => {
 
 // --- API Imports ---
 const authRoutes = require('./features/auth/auth.routes'); // Imports the authentication routes
+const shopRoutes = require('./features/shops/shop.routes'); // Imports the shop routes
 
 // --- API Routes ---
 app.use('/api/v1/auth', authRoutes); // Mounts the authentication routes under the /api/v1/auth prefix
+app.use('/api/v1/shops', shopRoutes); // Mounts the shop routes
 
 // --- Error Handling Middleware ---
 
