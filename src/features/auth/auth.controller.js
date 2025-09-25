@@ -51,7 +51,18 @@ const loginAdminHandler = async (req, res, next) => {
     }
 };
 
+const getCurrentUserHandler = (req, res) => {
+    // The `protect` middleware has already fetched the user and attached it to req.user
+    // We just need to send it back.
+    res.status(200).json({
+        success: true,
+        message: 'Current user data fetched successfully.',
+        data: req.user,
+    });
+};
+
 module.exports = {
     registerAdminHandler,
     loginAdminHandler,
+    getCurrentUserHandler,
 };
