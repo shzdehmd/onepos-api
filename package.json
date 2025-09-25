@@ -11,6 +11,9 @@
         "mongoose": "^8.18.2"
     },
     "description": "The OnePOS backend API.",
+    "devDependencies": {
+        "nodemon": "^3.1.10"
+    },
     "license": "SEE LICENSE IN LICENSE.md",
     "main": "src/server.js",
     "name": "onepos-api",
@@ -19,6 +22,9 @@
         "type": "git",
         "url": "https://github.com/shzdehmd/onepos-api"
     },
-    "scripts": {},
+    "scripts": {
+        "start": "node src/server.js",
+        "dev": "nodemon src/server.js"
+    },
     "version": "0.0.1"
 }
