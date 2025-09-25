@@ -13,6 +13,12 @@ app.get('/', (req, res) => {
     res.status(200).json({ message: 'Server is up and running!' });
 });
 
+// --- API Imports ---
+const authRoutes = require('./features/auth/auth.routes'); // Imports the authentication routes
+
+// --- API Routes ---
+app.use('/api/v1/auth', authRoutes); // Mounts the authentication routes under the /api/v1/auth prefix
+
 // --- Error Handling Middleware ---
 
 // Handle 404 Not Found errors
