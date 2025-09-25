@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Sale = require('../../models/sale.model');
 const SaleItem = require('../../models/saleItem.model');
 const Product = require('../../models/product.model');
+const Customer = require('../../models/customer.model');
 const Shop = require('../../models/shop.model');
 const vmsService = require('./sale.vms.service');
 
@@ -18,6 +19,12 @@ const createSale = async (saleData, userId) => {
     // We need to fetch the full shop object, including sensitive frcsSettings
     const shop = await Shop.findOne({ _id: shopId, adminId: userId }).select('+frcsSettings.p12_chain_file');
     if (!shop) throw new Error('Shop not found or permission denied.');
+
+    // If a customerId is provided, validate it.
+    if (customerId) {
+        const customer = await Customer.findOne({ _id: customerId, adminId: userId });
+        if (!customer) throw new Error('Customer not found or you do not have permission to use it.');
+    }
 
     if (!items || items.length === 0) throw new Error('Sale must include at least one item.');
 
@@ -114,10 +121,12 @@ const createSale = async (saleData, userId) => {
     }
 
     // --- 8. Return the final populated document ---
-    return Sale.findById(createdSale._id).populate({
-        path: 'items',
-        populate: { path: 'product', select: 'name' },
-    });
+    return Sale.findById(createdSale._id)
+        .populate({
+            path: 'items',
+            populate: { path: 'product', select: 'name' },
+        })
+        .populate('customerId', 'name phonenumber');
 };
 
 /**
@@ -132,6 +141,7 @@ const getSalesByShop = async (shopId, userId) => {
 
     return Sale.find({ shopId })
         .sort({ createdAt: -1 })
+        .populate('customerId', 'name phonenumber')
         .populate({
             path: 'items',
             populate: {
