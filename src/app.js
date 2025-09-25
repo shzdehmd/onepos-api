@@ -1,0 +1,36 @@
+const express = require('express');
+const cors = require('cors');
+
+const app = express();
+
+// --- Core Middleware ---
+app.use(cors()); // Enables Cross-Origin Resource Sharing
+app.use(express.json({ limit: '16kb' })); // Parses incoming JSON requests
+app.use(express.urlencoded({ extended: true, limit: '16kb' })); // Parses URL-encoded data
+
+// --- Health Check Route ---
+app.get('/', (req, res) => {
+    res.status(200).json({ message: 'Server is up and running!' });
+});
+
+// --- Error Handling Middleware ---
+
+// Handle 404 Not Found errors
+app.use((req, res, next) => {
+    const error = new Error(`Not Found - ${req.originalUrl}`);
+    res.status(404);
+    next(error);
+});
+
+// Global Error Handler - Catches all errors passed by next(error)
+app.use((err, req, res, next) => {
+    const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+    res.status(statusCode);
+    res.json({
+        message: err.message,
+        // Provide stack trace only in development environment
+        stack: process.env.NODE_ENV === 'development' ? err.stack : '🥞',
+    });
+});
+
+module.exports = app;

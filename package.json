@@ -1,0 +1,24 @@
+{
+    "author": {
+        "email": "ahmad@shahzad.dev",
+        "name": "Ahmad Shahzad",
+        "url": "https://shahzad.dev"
+    },
+    "dependencies": {
+        "cors": "^2.8.5",
+        "dotenv": "^17.2.2",
+        "express": "^5.1.0",
+        "mongoose": "^8.18.2"
+    },
+    "description": "The OnePOS backend API.",
+    "license": "SEE LICENSE IN LICENSE.md",
+    "main": "src/server.js",
+    "name": "onepos-api",
+    "private": true,
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/shzdehmd/onepos-api"
+    },
+    "scripts": {},
+    "version": "0.0.1"
+}
