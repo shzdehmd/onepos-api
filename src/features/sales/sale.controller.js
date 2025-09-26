@@ -1,20 +1,22 @@
 const saleService = require('./sale.service');
 
-/**
- * Handles the creation of a new sale record.
- */
 const createSaleHandler = async (req, res, next) => {
     try {
-        const userId = req.user._id; // From auth middleware
+        const user = req.user; // Pass the entire user object
         const saleData = req.body;
 
-        // Basic validation
-        if (!saleData.shopId || !saleData.items || !saleData.paymentType) {
+        // For Admins, shopId must be in the body. For Attendants, it's optional as it's derived from their token.
+        if (user.role === 'admin' && !saleData.shopId) {
             res.status(400);
-            throw new Error('Shop ID, items, and payment type are required.');
+            throw new Error('Shop ID is required for admins.');
         }
 
-        const newSale = await saleService.createSale(saleData, userId);
+        if (!saleData.items || !saleData.paymentType) {
+            res.status(400);
+            throw new Error('Items and payment type are required.');
+        }
+
+        const newSale = await saleService.createSale(saleData, user);
 
         res.status(201).json({
             success: true,
@@ -22,19 +24,13 @@ const createSaleHandler = async (req, res, next) => {
             data: newSale,
         });
     } catch (error) {
-        // The service layer will throw specific errors (e.g., insufficient stock)
-        // which will be caught here and passed to the global error handler.
         next(error);
     }
 };
 
-/**
- * Handles fetching all sales for a specific shop.
- * The shop ID is expected as a URL parameter.
- */
 const getShopSalesHandler = async (req, res, next) => {
     try {
-        const userId = req.user._id; // From auth middleware
+        const user = req.user; // Pass the entire user object
         const { shopId } = req.params;
 
         if (!shopId) {
@@ -42,7 +38,7 @@ const getShopSalesHandler = async (req, res, next) => {
             throw new Error('Shop ID is required.');
         }
 
-        const sales = await saleService.getSalesByShop(shopId, userId);
+        const sales = await saleService.getSalesByShop(shopId, user);
 
         res.status(200).json({
             success: true,
