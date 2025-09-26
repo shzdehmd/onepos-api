@@ -19,6 +19,7 @@ const shopRoutes = require('./features/shops/shop.routes'); // Imports the shop 
 const productCategoryRoutes = require('./features/productCategories/productCategory.routes'); // Imports the product category routes
 const supplierRoutes = require('./features/suppliers/supplier.routes'); // Imports the supplier routes
 const customerRoutes = require('./features/customers/customer.routes'); // Imports the customer routes
+const attendantRoutes = require('./features/attendants/attendant.routes'); // Imports the attendant routes
 
 // --- API Routes ---
 app.use('/api/v1/auth', authRoutes); // Mounts the authentication routes under the /api/v1/auth prefix
@@ -26,6 +27,7 @@ app.use('/api/v1/shops', shopRoutes); // Mounts the shop routes
 app.use('/api/v1/product-categories', productCategoryRoutes); // Mounts the product category routes
 app.use('/api/v1/suppliers', supplierRoutes); // Mounts the supplier routes
 app.use('/api/v1/customers', customerRoutes); // Mounts the customer routes
+app.use('/api/v1/attendants', attendantRoutes); // Mounts the attendant routes
 
 // --- Error Handling Middleware ---
 

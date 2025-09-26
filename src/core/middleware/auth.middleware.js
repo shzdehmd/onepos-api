@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const Admin = require('../../models/admin.model');
+const Attendant = require('../../models/attendant.model');
 
 const protect = async (req, res, next) => {
     try {
@@ -14,9 +15,16 @@ const protect = async (req, res, next) => {
         // Verify the token
         const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
 
-        // Find the user based on the token's payload (_id)
-        // Exclude sensitive fields like password and refreshToken
-        const user = await Admin.findById(decoded._id).select('-password -refreshToken');
+        let user;
+        // Check the role from the token and query the appropriate model
+        if (decoded.role === 'admin') {
+            user = await Admin.findById(decoded._id).select('-password -refreshToken');
+        } else if (decoded.role === 'attendant') {
+            user = await Attendant.findById(decoded._id).select('-password -refreshToken');
+        } else {
+            res.status(401);
+            throw new Error('Invalid token. Unknown user role.');
+        }
 
         if (!user) {
             // This case handles if the user has been deleted after the token was issued
@@ -24,13 +32,11 @@ const protect = async (req, res, next) => {
             throw new Error('Invalid access token. User not found.');
         }
 
-        // Attach the user object to the request for use in subsequent handlers
+        // Attach the found user (either Admin or Attendant) to the request
         req.user = user;
         next();
     } catch (error) {
-        // Catches errors from jwt.verify (e.g., token expired, invalid signature)
-        // and passes them to the global error handler
-        res.status(401); // Ensure status is set to 401 for auth errors
+        res.status(401);
         next(new Error('Unauthorized request. Invalid token.'));
     }
 };

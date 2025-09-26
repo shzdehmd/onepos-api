@@ -61,8 +61,41 @@ const getCurrentUserHandler = (req, res) => {
     });
 };
 
+const loginAttendantHandler = async (req, res, next) => {
+    const { uniqueDigits, password } = req.body;
+
+    if (!uniqueDigits || !password) {
+        return res.status(400).json({ success: false, message: 'Unique code and password are required.' });
+    }
+
+    try {
+        const { loggedInUser, accessToken, refreshToken } = await authService.loginAttendant(uniqueDigits, password);
+
+        const options = {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+        };
+
+        res.status(200)
+            .cookie('accessToken', accessToken, options)
+            .cookie('refreshToken', refreshToken, options)
+            .json({
+                success: true,
+                message: 'Attendant logged in successfully.',
+                data: {
+                    user: loggedInUser,
+                    accessToken,
+                    refreshToken,
+                },
+            });
+    } catch (error) {
+        next(error);
+    }
+};
+
 module.exports = {
     registerAdminHandler,
     loginAdminHandler,
     getCurrentUserHandler,
+    loginAttendantHandler,
 };
