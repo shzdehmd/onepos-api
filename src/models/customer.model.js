@@ -24,7 +24,7 @@ const customerSchema = new mongoose.Schema(
             trim: true,
         },
         wallet: {
-            type: Number,
+            type: Number, // Represents balance in cents
             default: 0,
         },
         // Each customer is owned by an admin to ensure data separation.

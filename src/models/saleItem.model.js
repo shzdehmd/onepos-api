@@ -14,7 +14,7 @@ const saleItemSchema = new mongoose.Schema(
         },
         // The price per unit at the time of sale
         unitPrice: {
-            type: Number,
+            type: Number, // Represents price in cents
             required: [true, 'Item unit price is required.'],
             min: 0,
         },

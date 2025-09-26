@@ -1,5 +1,5 @@
 const axios = require('axios');
-const https = require('https');
+const https = require('https-');
 const crypto = require('crypto');
 const { decrypt } = require('../../core/utils/crypto');
 
@@ -52,7 +52,8 @@ const signNormalSaleInvoice = async (shop, sale) => {
     // 2. Construct Payment Payload
     const paymentPayload = [
         {
-            amount: sale.amountPaid,
+            // --- KEY CHANGE: Convert cents to decimal for the external API ---
+            amount: sale.amountPaid / 100,
             paymentType: mapPaymentType(sale.paymentType),
         },
     ];
@@ -60,23 +61,22 @@ const signNormalSaleInvoice = async (shop, sale) => {
     // 3. Construct Full Payload
     const payload = {
         dateAndTimeOfIssue: sale.createdAt.toISOString(),
-        cashier: sale.processedBy.toString(), // Assumes processedBy is the cashier ID
+        cashier: sale.processedBy.toString(),
         invoiceType: invoiceType,
         transactionType: 'Sale',
         payment: paymentPayload,
         invoiceNumber: sale.receiptNo,
         items: sale.items.map((item) => {
-            // For now, we assume no tax. This will be updated when the Tax feature is built.
-            const taxLabel = 'N';
+            const taxLabel = 'N'; // Placeholder
 
             return {
                 name: item.product.name,
                 quantity: item.quantity,
-                // The VMS API requires the final, tax-inclusive price.
-                // We assume item.unitPrice is this final price.
-                unitPrice: item.unitPrice,
+                // --- Convert cents to decimal for the external API ---
+                unitPrice: item.unitPrice / 100,
                 labels: [taxLabel],
-                totalAmount: item.total, // Using the virtual property from the SaleItem model
+                // --- Convert cents to decimal for the external API ---
+                totalAmount: item.total / 100,
             };
         }),
     };
@@ -87,7 +87,7 @@ const signNormalSaleInvoice = async (shop, sale) => {
     const httpsAgent = new https.Agent({
         pfx: p12_chain_file,
         passphrase: password,
-        rejectUnauthorized: false, // Often required for sandbox environments
+        rejectUnauthorized: false,
     });
 
     const headers = {

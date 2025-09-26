@@ -24,12 +24,12 @@ const purchaseSchema = new mongoose.Schema(
             },
         ],
         totalAmount: {
-            type: Number,
+            type: Number, // Represents amount in cents
             required: true,
             min: 0,
         },
         amountPaid: {
-            type: Number,
+            type: Number, // Represents amount in cents
             default: 0,
             min: 0,
         },

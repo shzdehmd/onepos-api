@@ -12,12 +12,12 @@ const productSchema = new mongoose.Schema(
             trim: true,
         },
         sellingPrice: {
-            type: Number,
+            type: Number, // Represents price in cents
             required: [true, 'Selling price is required.'],
             min: 0,
         },
         buyingPrice: {
-            type: Number,
+            type: Number, // Represents price in cents
             min: 0,
         },
         quantity: {
